@@ -1,80 +1,367 @@
 FORMAT: 1A
 HOST: http://polls.apiblueprint.org/
 
-# Polls API
+# Gate Three API
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+API provides access to Gate Three services.
 
-## Questions Collection [/questions]
+## Group User Session Management
 
-### List All Questions [GET]
+Resources related to user session management.
+
+## User Session [/usersession]
+
+### Login/Create User Session [POST /usersession?idCustomer=1&idProject=123]
+
++ Parameters
+    + idCustomer (String) - ID of customer to login to.
+    + idProject (String) - ID of project to login to.  Use "home" to login to Gate Three Home.
+    
++ Request Create User Session (application/json)
+    
+    + Body
+    
+            {
+                "username": "root@ellisdon.com", 
+                "authSessionId": "<Okta-session-id>"
+            }
+
++ Response 200 (application/json)
+
+    + Header
+    
+            G3-User-Session-Token: <user-session-jwt>
+
+    + Body
+    
+            {
+              "token": "<user-session-jwt>"
+            }
+
+### Login to Customer [POST /usersession/logInToCustomer/{idCustomer}]
+
++ Parameters
+    + idCustomer (String) - ID of customer to login to.
+    
++ Request Create User Session (application/json)
+
++ Response 200 (application/json)
+
+    + Header
+    
+            G3-User-Session-Token: <user-session-jwt>
+
+    + Body
+    
+            {
+              "token": "<user-session-jwt>"
+            }
+
+### Logout/Delete User Session [DELETE]
+
++ Response 200 (application/json)
+
+## Group Settings
+
+Resources related to settings.
+
+## Settings Collection [/settings?name="CNF_CHANGE_TYPE"&defaultOnly=false&selectedIds="23,45,343"]
+
++ Parameters
+  + name (String) - the settings name (provide list of valid values)
+  + defaultOnly (Boolean, optional) - true if the default value is only returned, false for all values for the specified setting
+  + selectedIds (Array[Number])- current selected values (only pass ID of those values)
+
+### Get Setting [GET]
 
 + Response 200 (application/json)
 
         [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
+          {
+            "changed": false,
+            "obs": [],
+            "saveOrUpdateCalled": false,
+            "userSessionId": null,
+            "userActionId": null,
+            "actionContext": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFByb2plY3QiOm51bGwsImhvbWVQcm9qZWN0Ijp0cnVlLCJzZXR0aW5nTGV2ZWxFbnVtIjoiQ3VzdG9tZXIiLCJzZXR0aW5nVGFyZ2V0SWQiOjAsImFjcE1vZGVFbnVtIjoiRU5USVRZX1BST0pFQ1RfVE9fU0VTU0lPTl9QUk9KRUNUIiwiYWNwUHJvamVjdElkIjpudWxsfQ.u991PsYuw4lNrCUtlwg86gDOXd-VLyJl9fyPscol5XI",
+            "userAction": "NOACTION",
+            "persistentDTO": {
+              "idChangeType": 251902,
+              "isActive": true,
+              "name": null,
+              "description": "Architectural Change Order",
+              "prefix": "ACO",
+              "nextAvailableNumber": 25,
+              "isTotalEstimatedAmount": false,
+              "isNotToExceedAmount": false,
+              "updatePrimeContractPayApplication": true,
+              "isDrawdown": true,
+              "fkjasperTemplate": {
+                "idJasperTemplate": 452386,
+                "name": "CHANGE_DETAILS",
+                "description": null,
+                "fkAclLevel": {
+                  "idAclLevel": 1,
+                  "aclLevelName": "Customer",
+                  "targetID": 0,
+                  "createdBy": 100,
+                  "createdDate": 1252476000000,
+                  "updatedBy": 100,
+                  "updatedDate": 1322153917000,
+                  "lockVersion": 148,
+                  "parentAclLevelId": null
+                },
+                "isLock": null,
+                "createdBy": 100019,
+                "createdDate": 1457540477000,
+                "updatedBy": 100019,
+                "updatedDate": 1457540491000,
+                "lockVersion": 1,
+                "jasperTemplateFileDetailDTOs": [
+                  {
+                    "idJasperTemplateFile": 359751,
+                    "description": "",
+                    "postedDate": null,
+                    "postedByUser": null,
+                    "fileName": "A1-ChangeAdditionalCost.jasper",
+                    "fileType": "jasper",
+                    "fileCreatedDate": null,
+                    "supportingDocumentDocId": "d5654a38-15ff-4752-b132-b2934257a1c3",
+                    "createdBy": 100019,
+                    "createdDate": 1457540491000,
+                    "updatedBy": 100019,
+                    "updatedDate": 1457540491000,
+                    "lockVersion": 0
+                  }
+                ],
+                "homeProject": true,
+                "activateActionAvailable": false,
+                "deactivateActionAvailable": false,
+                "deleteActionAvailable": true,
+                "editActionAvailable": true,
+                "validateEditOnSaveIfNotUsed": false
+              },
+              "fkAclLevel": {
+                "idAclLevel": 1,
+                "aclLevelName": "Customer",
+                "targetID": 0,
+                "createdBy": 100,
+                "createdDate": 1252476000000,
+                "updatedBy": 100,
+                "updatedDate": 1322153917000,
+                "lockVersion": 148,
+                "parentAclLevelId": null
+              },
+              "isLock": null,
+              "isDefault": false,
+              "createdBy": 100019,
+              "createdDate": 1440170205000,
+              "updatedBy": 100019,
+              "updatedDate": 1472140847000,
+              "lockVersion": 62,
+              "homeProject": true,
+              "activateActionAvailable": false,
+              "deactivateActionAvailable": true,
+              "deleteActionAvailable": true,
+              "editActionAvailable": true,
+              "validateEditOnSaveIfNotUsed": false
+            },
+            "auditLogIDList": [],
+            "auditLogParameters": [],
+            "parentFormBean": null,
+            "permission": "ReadOnly",
+            "originLevelInfo": {
+              "changed": false,
+              "obs": [],
+              "saveOrUpdateCalled": false,
+              "userSessionId": null,
+              "userActionId": null,
+              "actionContext": null,
+              "userAction": "NOACTION",
+              "persistentDTO": {
+                "idAclLevel": 1,
+                "aclLevelName": "Customer",
+                "targetID": 0,
+                "createdBy": 100,
+                "createdDate": 1252476000000,
+                "updatedBy": 100,
+                "updatedDate": 1322153917000,
+                "lockVersion": 148,
+                "parentAclLevelId": null
+              },
+              "auditLogIDList": [],
+              "auditLogParameters": []
+            },
+            "fkjasperTemplate": null,
+            "homeProject": true,
+            "activated": true,
+            "activateActionAvailable": false,
+            "deactivateActionAvailable": true,
+            "deleteActionAvailable": true,
+            "editActionAvailable": true,
+            "validateEditOnSaveIfNotUsed": false,
+            "readOnly": true
+          },
+          {
+            "changed": false,
+            "obs": [],
+            "saveOrUpdateCalled": false,
+            "userSessionId": null,
+            "userActionId": null,
+            "actionContext": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFByb2plY3QiOm51bGwsImhvbWVQcm9qZWN0Ijp0cnVlLCJzZXR0aW5nTGV2ZWxFbnVtIjoiQXJlYSIsInNldHRpbmdUYXJnZXRJZCI6MjEsImFjcE1vZGVFbnVtIjoiRU5USVRZX1BST0pFQ1RfVE9fU0VTU0lPTl9QUk9KRUNUIiwiYWNwUHJvamVjdElkIjpudWxsfQ.Kic8DU76WnKE1ft9bc93ElBTcrnmBi8_jDV6lmgB4Is",
+            "userAction": "NOACTION",
+            "persistentDTO": {
+              "idChangeType": 110288,
+              "isActive": true,
+              "name": null,
+              "description": "Area-01",
+              "prefix": "area",
+              "nextAvailableNumber": 2,
+              "isTotalEstimatedAmount": true,
+              "isNotToExceedAmount": true,
+              "updatePrimeContractPayApplication": true,
+              "isDrawdown": false,
+              "fkjasperTemplate": null,
+              "fkAclLevel": {
+                "idAclLevel": 8476,
+                "aclLevelName": "Area",
+                "targetID": 21,
+                "createdBy": 0,
+                "createdDate": 1314740914000,
+                "updatedBy": 0,
+                "updatedDate": 1322581697000,
+                "lockVersion": 45,
+                "parentAclLevelId": 1
+              },
+              "isLock": null,
+              "isDefault": false,
+              "createdBy": 100019,
+              "createdDate": 1409961235000,
+              "updatedBy": 100019,
+              "updatedDate": 1450888227000,
+              "lockVersion": 9,
+              "homeProject": true,
+              "activateActionAvailable": false,
+              "deactivateActionAvailable": true,
+              "deleteActionAvailable": true,
+              "editActionAvailable": true,
+              "validateEditOnSaveIfNotUsed": false
+            },
+            "auditLogIDList": [],
+            "auditLogParameters": [],
+            "parentFormBean": null,
+            "permission": "ReadOnly",
+            "originLevelInfo": {
+              "changed": false,
+              "obs": [],
+              "saveOrUpdateCalled": false,
+              "userSessionId": null,
+              "userActionId": null,
+              "actionContext": null,
+              "userAction": "NOACTION",
+              "persistentDTO": {
+                "idAclLevel": 8476,
+                "aclLevelName": "Area",
+                "targetID": 21,
+                "createdBy": 0,
+                "createdDate": 1314740914000,
+                "updatedBy": 0,
+                "updatedDate": 1322581697000,
+                "lockVersion": 45,
+                "parentAclLevelId": 1
+              },
+              "auditLogIDList": [],
+              "auditLogParameters": []
+            },
+            "fkjasperTemplate": null,
+            "homeProject": true,
+            "activated": true,
+            "activateActionAvailable": false,
+            "deactivateActionAvailable": true,
+            "deleteActionAvailable": true,
+            "editActionAvailable": true,
+            "validateEditOnSaveIfNotUsed": false,
+            "readOnly": true
+          },
+          {
+            "changed": false,
+            "obs": [],
+            "saveOrUpdateCalled": false,
+            "userSessionId": null,
+            "userActionId": null,
+            "actionContext": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFByb2plY3QiOjU1OSwiaG9tZVByb2plY3QiOmZhbHNlLCJzZXR0aW5nTGV2ZWxFbnVtIjoiUHJvamVjdCIsInNldHRpbmdUYXJnZXRJZCI6NTU5LCJhY3BNb2RlRW51bSI6IkVOVElUWV9QUk9KRUNUX1RPX1NFU1NJT05fUFJPSkVDVCIsImFjcFByb2plY3RJZCI6NTU5fQ.v88zLEb3HO09R0yA0MyILHECdI6VNZIoWm6qv7Tx8lQ",
+            "userAction": "NOACTION",
+            "persistentDTO": {
+              "idChangeType": 107824,
+              "isActive": true,
+              "name": null,
+              "description": "Change Summary Email Template",
+              "prefix": "cswet",
+              "nextAvailableNumber": 26,
+              "isTotalEstimatedAmount": true,
+              "isNotToExceedAmount": true,
+              "updatePrimeContractPayApplication": true,
+              "isDrawdown": false,
+              "fkjasperTemplate": null,
+              "fkAclLevel": {
+                "idAclLevel": 8484,
+                "aclLevelName": "Project",
+                "targetID": 559,
+                "createdBy": 0,
+                "createdDate": 1315520580000,
+                "updatedBy": 0,
+                "updatedDate": 1321983409000,
+                "lockVersion": 9,
+                "parentAclLevelId": 8476
+              },
+              "isLock": null,
+              "isDefault": false,
+              "createdBy": 100019,
+              "createdDate": 1391036287000,
+              "updatedBy": 100019,
+              "updatedDate": 1432584176000,
+              "lockVersion": 66,
+              "homeProject": false,
+              "activateActionAvailable": false,
+              "deactivateActionAvailable": true,
+              "deleteActionAvailable": true,
+              "editActionAvailable": true,
+              "validateEditOnSaveIfNotUsed": false
+            },
+            "auditLogIDList": [],
+            "auditLogParameters": [],
+            "parentFormBean": null,
+            "permission": "ReadWrite",
+            "originLevelInfo": {
+              "changed": false,
+              "obs": [],
+              "saveOrUpdateCalled": false,
+              "userSessionId": null,
+              "userActionId": null,
+              "actionContext": null,
+              "userAction": "NOACTION",
+              "persistentDTO": {
+                "idAclLevel": 8484,
+                "aclLevelName": "Project",
+                "targetID": 559,
+                "createdBy": 0,
+                "createdDate": 1315520580000,
+                "updatedBy": 0,
+                "updatedDate": 1321983409000,
+                "lockVersion": 9,
+                "parentAclLevelId": 8476
+              },
+              "auditLogIDList": [],
+              "auditLogParameters": []
+            },
+            "fkjasperTemplate": null,
+            "homeProject": false,
+            "activated": true,
+            "activateActionAvailable": false,
+            "deactivateActionAvailable": true,
+            "deleteActionAvailable": true,
+            "editActionAvailable": true,
+            "validateEditOnSaveIfNotUsed": false,
+            "readOnly": false
+          }
         ]
-
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
-
-+ Request (application/json)
-
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
-
-+ Response 201 (application/json)
-
-    + Headers
-
-            Location: /questions/2
-
-    + Body
-
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
-            }
