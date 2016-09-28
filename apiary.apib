@@ -11,14 +11,18 @@ Resources related to user session management.
 
 ## User Session [/usersession]
 
-### Login/Create User Session [POST /usersession?idCustomer=1&idProject=123]
+### Create User Session [POST /usersession?idCustomer=1&idProject=123]
 
 + Parameters
     + idCustomer (String) - ID of customer to login to.
     + idProject (String) - ID of project to login to.  Use "home" to login to Gate Three Home.
     
 + Request Create User Session (application/json)
+
+    + Header
     
+            G3-User-Session-Token: <user-session-jwt>
+            
     + Body
     
             {
@@ -28,9 +32,7 @@ Resources related to user session management.
 
 + Response 200 (application/json)
 
-    + Header
-    
-            G3-User-Session-Token: <user-session-jwt>
+
 
     + Body
     
@@ -38,18 +40,24 @@ Resources related to user session management.
               "token": "<user-session-jwt>"
             }
 
-### Login to Customer [POST /usersession/logInToCustomer/{idCustomer}]
+### Delete User Session [DELETE]
+
++ Response 200 (application/json)
+
+## Customer Login [/usersession/logInToCustomer/{idCustomer}]
+
+### Log into Customer [POST]
 
 + Parameters
     + idCustomer (String) - ID of customer to login to.
     
 + Request Create User Session (application/json)
 
-+ Response 200 (application/json)
-
     + Header
     
             G3-User-Session-Token: <user-session-jwt>
+
++ Response 200 (application/json)
 
     + Body
     
@@ -57,9 +65,26 @@ Resources related to user session management.
               "token": "<user-session-jwt>"
             }
 
-### Logout/Delete User Session [DELETE]
+## Project Login [/usersession/logInToProject/{idProject}]
+
+### Log into Project [POST]
+
++ Parameters
+    + idProject (String) - ID of project to login to.  Use "home" to login to Gate Three Home.
+    
++ Request Create User Session (application/json)
+
+    + Header
+    
+            G3-User-Session-Token: <user-session-jwt>
 
 + Response 200 (application/json)
+
+    + Body
+    
+            {
+              "token": "<user-session-jwt>"
+            }
 
 ## Group Settings
 
@@ -365,3 +390,105 @@ Resources related to settings.
             "readOnly": false
           }
         ]
+
+## Group Access Control Privileges [/acp]
+
+## Has Access Control Right? [GET /hasAccessControlRight?groupName=Company Category&privilege=Read&strict=false]
+
++ Parameters
+    + groupName (String) - Name of group to check if user has access.
+    + privilege (Enum[String]) - Check if user has this privilege or higher for group name.
+        + Members
+            + Read
+            + Update
+            + Create
+            + Execute
+    + strict (Boolean, optional) - If true the user must have exactly the requested privilege (i.e. not higher).
+    
++ Request Create User Session (application/json)
+
+    + Header
+    
+            G3-User-Session-Token: <user-session-jwt>
+            G3-Action-Context-Token: <action-context-jwt>
+
++ Response 200 (application/json)
+
+    + Body
+    
+            true
+
+## Has Access Control Rights? [POST /hasAccessControlRight]
+
++ Request Create User Session (application/json)
+
+    + Header
+
+            G3-User-Session-Token: <user-session-jwt>
+            G3-Action-Context-Token: <action-context-jwt>
+
+    + Body
+    
+            [
+                {
+                    "groupName": "Company Category",
+                    "privilege": "Read",
+                    "strict": false
+                },
+                {
+                    "groupName": "A fake group",
+                    "privilege": "Execute",
+                    "strict": false
+                }
+            ]
+
++ Response 200 (application/json)
+
+    + Body
+    
+            [
+                {
+                    "groupName": "Company Category",
+                    "privilege": "Read",
+                    "strict": false,
+                    "hasRight": true
+                },
+                {
+                    "groupName": "A fake group",
+                    "privilege": "Execute",
+                    "strict": false,
+                    "hasRight": false
+                }
+            ]
+
+## Highest Privilege [GET /highestPrivilege?groupName=Company Category]
+
++ Parameters
+    + groupName (String) - Name of group to check if user has access.
+
++ Request Create User Session (application/json)
+
+    + Header
+    
+            G3-User-Session-Token: <user-session-jwt>
+            G3-Action-Context-Token: <action-context-jwt>
+
++ Response 200 (application/json)
+
+        "Execute"
+
+## Is Executable [GET /isExecutable?groupName=Company Category]
+
++ Parameters
+    + groupName (String) - Name of group to check if user has access.
+
++ Request Create User Session (application/json)
+
+    + Header
+    
+            G3-User-Session-Token: <user-session-jwt>
+            G3-Action-Context-Token: <action-context-jwt>
+
++ Response 200 (application/json)
+
+        true
