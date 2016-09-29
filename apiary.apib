@@ -17,7 +17,7 @@ Resources related to user session management.
     + idCustomer (String) - ID of customer to login to.
     + idProject (String) - ID of project to login to.  Use "home" to login to Gate Three Home.
     
-+ Request Create User Session (application/json)
++ Request  (application/json)
 
     + Header
     
@@ -51,7 +51,7 @@ Resources related to user session management.
 + Parameters
     + idCustomer (String) - ID of customer to login to.
     
-+ Request Create User Session (application/json)
++ Request (application/json)
 
     + Header
     
@@ -72,7 +72,7 @@ Resources related to user session management.
 + Parameters
     + idProject (String) - ID of project to login to.  Use "home" to login to Gate Three Home.
     
-+ Request Create User Session (application/json)
++ Request (application/json)
 
     + Header
     
@@ -391,9 +391,15 @@ Resources related to settings.
           }
         ]
 
-## Group Access Control Privileges [/acp]
+## Group Access Control Privileges
 
-## Has Access Control Right? [GET /hasAccessControlRight?groupName=Company Category&privilege=Read&strict=false]
+Resources related to checking access control privileges.
+
+## Has Access Control Collection [/acp/hasAccessControlRight]
+
+For a given group(s) and a specified privilege, checks if user has the access.
+
+## Check Access for a Group [GET /acp/hasAccessControlRight?groupName=Company Category&privilege=Read&strict=false]
 
 + Parameters
     + groupName (String) - Name of group to check if user has access.
@@ -405,7 +411,7 @@ Resources related to settings.
             + Execute
     + strict (Boolean, optional) - If true the user must have exactly the requested privilege (i.e. not higher).
     
-+ Request Create User Session (application/json)
++ Request (application/json)
 
     + Header
     
@@ -418,9 +424,9 @@ Resources related to settings.
     
             true
 
-## Has Access Control Rights? [POST /hasAccessControlRight]
+## Check Access for a List of Groups [POST /acp/hasAccessControlRight]
 
-+ Request Create User Session (application/json)
++ Request (application/json)
 
     + Header
 
@@ -461,12 +467,16 @@ Resources related to settings.
                 }
             ]
 
-## Highest Privilege [GET /highestPrivilege?groupName=Company Category]
+## Get Highest Privilege Collection [/acp/highestPrivilege]
+
+For a given group(s), retrives the highest privilege the user has been granted.
+
+## Get Highest Privilege for a Group [GET /acp/highestPrivilege?groupName=Company Category]
 
 + Parameters
     + groupName (String) - Name of group to check if user has access.
 
-+ Request Create User Session (application/json)
++ Request (application/json)
 
     + Header
     
@@ -477,12 +487,50 @@ Resources related to settings.
 
         "Execute"
 
-## Is Executable [GET /isExecutable?groupName=Company Category]
+## Get Highest Privileges for a List of Groups [POST /acp/highestPrivilege]
+
++ Request (application/json)
+
+    + Header
+    
+            G3-User-Session-Token: <user-session-jwt>
+            G3-Action-Context-Token: <action-context-jwt>
+
+    + Body
+    
+            [
+                {
+                    "groupName": "VM_Approve"
+                },
+                {
+                    "groupName": "A fake group"
+                }
+            ]
+
++ Response 200 (application/json)
+
+            [
+                {
+                    "groupName": "VM_Approve",
+                    "privilege": "Execute",
+                    "hasRight": true
+                },
+                {
+                    "groupName": "A fake group",
+                    "hasRight": false
+                }
+            ]
+
+## Is Executable Collection [/acp/isExecutable]
+
+Checks if user has executable privilege for a given group(s).  Similar to Has Access Control endpoints except the privilege is defaulted to executable.
+
+## Check Executable Access for Group [GET /acp/isExecutable?groupName=Company Category]
 
 + Parameters
     + groupName (String) - Name of group to check if user has access.
 
-+ Request Create User Session (application/json)
++ Request (application/json)
 
     + Header
     
@@ -492,3 +540,36 @@ Resources related to settings.
 + Response 200 (application/json)
 
         true
+        
+## Check Executable Access for a List of Groups [POST /acp/isExecutable]
+
++ Request (application/json)
+
+    + Header
+    
+            G3-User-Session-Token: <user-session-jwt>
+            G3-Action-Context-Token: <action-context-jwt>
+
+    + Body
+    
+            [
+                {
+                    "groupName": "VM_Approve"
+                },
+                {
+                    "groupName": "A fake group"
+                }
+            ]
+
++ Response 200 (application/json)
+
+            [
+                {
+                    "groupName": "VM_Approve",
+                    "hasRight": true
+                },
+                {
+                    "groupName": "A fake group",
+                    "hasRight": false
+                }
+            ]
