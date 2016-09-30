@@ -1,0 +1,334 @@
+FORMAT: 1A
+HOST: http://localhost:9090/gate_three-restAPI
+
+# Gate Three API
+
+API provides access to Gate Three services.
+
+## Group User Session Management
+
+Resources related to user session management.
+
+## User Session [/usersession]
+
+### Create User Session [POST /usersession{?idCustomer,idProject}]
+
+Create a user session in Gate Three and logs into the specified customer and project.  The response is the user session token that is passed to all future requests in the **G3-User-Session-Token** header.
+
++ Parameters
+    + idCustomer: 1 (string, required) - ID of customer to login to
+    + idProject: 1010 (string, optional) - ID of project to login to.  Use "home" to login to **Gate Three Home**.
+        + Default: home
+
++ Request (application/json)
+
+    + Attributes (User Credentials)
+
++ Response 200 (application/json)
+
+    + Attributes (Token)
+
+### Delete User Session [DELETE]
+
+Deletes (logout) of the user session specified in the **G3-User-Session-Token** header.
+
++ Request
+
+    + Header
+
+            G3-User-Session-Token: <user-session-token>
+
++ Response 200 (application/json)
+
+## Customer Login [/usersession/logInToCustomer/{idCustomer}]
+
+In active session, logs into a different customer.  The response is the new user session token that should be used going forward in the **G3-User-Session-Token** header.
+
+### Log into Customer [POST]
+
++ Parameters
+    + idCustomer: 2 (string) - ID of customer to login to.
+
++ Request (application/json)
+
+    + Header
+
+            G3-User-Session-Token: <user-session-token>
+
++ Response 200 (application/json)
+
+    + Attributes (Token)
+
+## Project Login [/usersession/logInToProject/{idProject}]
+
+In active session, logs into a different project.  The response is the new user session token that should be used going forward in the **G3-User-Session-Token** header.
+
+### Log into Project [POST]
+
++ Parameters
+    + idProject: 2020 (string) - ID of project to login to.  Use "home" to login to **Gate Three Home**.
+
++ Request (application/json)
+
+    + Header
+
+            G3-User-Session-Token: <user-session-token>
+
++ Response 200 (application/json)
+
+    + Attributes (Token)
+
+## Group Settings
+
+Resources related to settings.
+
+## Settings Collection [/settings]
+
+### Get Setting [GET /settings{?name,defaultOnly,selectedIds}]
+
+Get values for a setting.
+
++ Parameters
+    + name: CNF_CHANGE_TYPE (enum[string], required) - Name of setting to get
+        + Members
+            + AUTOMATIC_SCO_ISSUING
+            + CNF_CHANGE_TYPE
+            + CNF_CHANGE_TYPE_AUTO
+            + CHANGE_AUTO_CREATE_BUDGET_BILLING
+            + CNF_CHANGE_ISSUE_CODE
+            + CNF_CHANGE_REASON
+            + CNF_CHANGE_CONTACT_NOTIF
+            + CNF_CHANGE_ADDITIONAL_COST
+            + CNF_CHANGE_HIDE_FIELD_ALL
+            + CNF_CHANGE_HIDE_FIELD_OVERHEAD
+            + CNF_CHANGE_HIDE_FIELD_TAXES
+            + CNF_CHANGE_HIDE_FIELD_BUDGETLINES
+            + CNF_CHANGE_HIDE_FIELD_BILLINGLINES
+            + QUOTE_REQUEST_NOTIFICATION
+            + CHANGE_DESCRIPTION
+            + ISSUE_CHANGE_ORDER_NOTIFICATION
+            + ISSUE_SUB_CHANGE_ORDER_NOTIFICATION
+            + CHANGE_SUBMISION_NOTIFICATION
+            + PARAMETER_CHANGE_PHASE
+            + PARAMETER_SUBCONTRACTEDQUOTE_OVERHEADPROFIT_PERCENTAGE
+            + PARAMETER_SELFTPERFORMEDQUOTE_OVERHEADPROFIT_PERCENTAGE
+            + PROGRESS_DETAILS_REVIEW_TEMPLATE
+            + PROGRESS_SUMMARY_REVIEW_TEMPLATE
+            + PROGRESS_DISTRIBUTION_REVIEW_TEMPLATE
+            + PARAMETER_UNASSIGNEDQUOTE_OVERHEADPROFIT_PERCENTAGE
+            + CHANGE_CONFIGURATION_COSTACCOUNT_SUBCONTRACTED_QUOTE
+            + CHANGE_CONFIGURATION_COSTACCOUNT_SELFPERFORMED_QUOTE
+            + CHANGE_CONFIGURATION_COSTACCOUNT_UNASSIGNED_QUOTE
+            + CHANGE_CONFIGURATION_COSTACCOUNT_ALL
+    + defaultOnly: false (boolean, optional) - True if the default value is only returned, false for all values for the specified setting
+        + Default: false
+    + selectedIds: 12,578,444 (array[number], optional) - Currently selected values (only pass ID of those values).
+
++ Response 200 (application/json)
+
+        [
+          {
+            "persistentDTO": {
+              "idChangeType": 251902,
+              "isActive": true,
+              "name": null,
+              "description": "Architectural Change Order",
+              "prefix": "ACO",
+              "nextAvailableNumber": 25,
+              "isTotalEstimatedAmount": false,
+              "isNotToExceedAmount": false,
+              "updatePrimeContractPayApplication": true,
+              "isDrawdown": true,
+            }
+          },
+          {
+            "persistentDTO": {
+              "idChangeType": 110288,
+              "isActive": true,
+              "name": null,
+              "description": "Area-01",
+              "prefix": "area",
+              "nextAvailableNumber": 2,
+              "isTotalEstimatedAmount": true,
+              "isNotToExceedAmount": true,
+              "updatePrimeContractPayApplication": true,
+              "isDrawdown": false,
+            }
+          }
+        ]
+
+## Group Access Control Privileges
+
+Resources related to checking access control privileges.
+
+**How privileges work**: privileges have an order.  Starting from the lowest privilege, they are: *Read*, *Update*, *Create*, and *Execute*.  Therefore if a user has the *Execute* privilege then they have full access (i.e. implies they have the lower privileges: *Read*, *Update*, and *Create*).  The *hasAccessControlRight* endpoint checks if a user has the requested privilege *or higher*.  You can specify a *strict* flag to check if they have the exact privilege.  A more convenient endpoint is the get *highestPrivilege*, which returns the highest privilege.  Therefore if you want to know if a user has edit or just read only, you can call the endpoint and test if the privilege is equal to *Read*.
+
+## Has Access Control Collection [/acp/hasAccessControlRight]
+
+For a given group(s) and a specified privilege, checks if user has the access.  You can specify a *strict* flag to check if they have the exact privilege.
+
+## Check Access for a Group [GET /acp/hasAccessControlRight{?groupName,privilege,strict}]
+
+Checks if a user has the requested privilege *or higher* on the specified group.
+
++ Parameters
+    + groupName (string) - Name of group to check if user has access.
+    + privilege (enum[string]) - Check if user has this privilege or higher for group name.
+        + Members
+            + Read
+            + Update
+            + Create
+            + Execute
+    + strict (boolean, optional) - If true the user must have exactly the requested privilege (i.e. not higher).
+        + Default: false
+
++ Request (application/json)
+
+    + Header
+
+            G3-User-Session-Token: <user-session-token>
+            G3-Action-Context-Token: <action-context-token>
+
++ Response 200 (application/json)
+
+    + Body
+
+            true
+
+## Check Access for a List of Groups [POST /acp/hasAccessControlRight]
+
+Checks if a user has the requested privileges *or higher* on the specified groups.  You can specify a *strict* flag to check if they have the exact privilege.
+
++ Request (application/json)
+
+    + Header
+
+            G3-User-Session-Token: <user-session-token>
+            G3-Action-Context-Token: <action-context-token>
+
+    + Attributes (array[Access Control Right Request])
+
++ Response 200 (application/json)
+
+    + Attributes (array[Access Control Right Response])
+
+## Get Highest Privilege Collection [/acp/highestPrivilege]
+
+## Get Highest Privilege for a Group [GET /acp/highestPrivilege{?groupName}]
+
+Retrieves the user's higheset privilege to a requested group.
+
++ Parameters
+    + groupName (string) - Name of group to check if user has access.
+
++ Request (application/json)
+
+    + Header
+
+            G3-User-Session-Token: <user-session-token>
+            G3-Action-Context-Token: <action-context-token>
+
++ Response 200 (application/json)
+
+        "Execute"
+
+## Get Highest Privileges for a List of Groups [POST /acp/highestPrivilege]
+
+Retrieves the user's higheset privilege to a requested list of groups.
+
++ Request (application/json)
+
+    + Header
+
+            G3-User-Session-Token: <user-session-token>
+            G3-Action-Context-Token: <action-context-token>
+
+    + Attributes (array[Access Control Group Request])
+
++ Response 200 (application/json)
+
+    + Attributes (array[Access Control Group Response])
+
+## Is Executable Collection [/acp/isExecutable]
+
+Checks if user has *Execute* privilege for a given group(s).
+
+## Check Executable Access for Group [GET /acp/isExecutable{?groupName}]
+
+Checks if user has *Execute* privilege for a specified group.
+
++ Parameters
+    + groupName (string) - Name of group to check if user has access.
+
++ Request (application/json)
+
+    + Header
+
+            G3-User-Session-Token: <user-session-token>
+            G3-Action-Context-Token: <action-context-token>
+
++ Response 200 (application/json)
+
+        true
+
+## Check Executable Access for a List of Groups [POST /acp/isExecutable]
+
+Checks if user has *Execute* privilege for a list of groups.
+
++ Request (application/json)
+
+    + Header
+
+            G3-User-Session-Token: <user-session-token>
+            G3-Action-Context-Token: <action-context-token>
+
+    + Attributes (array[Access Control Group Request])
+
++ Response 200 (application/json)
+
+    + Attributes (array[Access Control Group Response])
+
+# Data Structures
+
+## User Credentials (object)
+
++ username: root@ellisdon.com (string) - User name
++ authSessionId: 102W6swFEMaTPCjYjRJudvnLg (string) - Authenticated session ID (i.e. Okta session ID)
+
+## Token (object)
+
++ token: eyJhb.eyJleHBpcnkiO.RQ1cNX (string) - Token representing the user session.  Pass to other requests in the **G3-User-Session-Token** header.
+
+## Access Control Right Request (object)
+
++ groupName: Comany Category (string) - Check for access to this group.
++ privilege (enum[string]) - Check if user has this privilege or higher for group name.
+    + Members
+        + Read
+        + Update
+        + Create
+        + Execute
++ strict (boolean, optional) - User must have exactly the requested privilege
+    + Default: false
+
+## Access Control Right Response (object)
+
++ groupName: Comany Category (string) - Check for access to this group.
++ privilege (enum[string]) - Check if user has this privilege or higher for group name.
+    + Members
+        + Read
+        + Update
+        + Create
+        + Execute
++ strict (boolean) - User must have exactly the requested privilege
+    + Default: false
++ hasRight (boolean) - True if user has the requested access, false otherwise.
+
+## Access Control Group Request (object)
+
++ groupName: Comany Category (string) - Check for access to this group.
+
+## Access Control Group Response (object)
+
++ groupName: Comany Category (string) - Check for access to this group.
++ hasRight (boolean) - True if user has the requested access, false otherwise.
