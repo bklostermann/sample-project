@@ -26,7 +26,9 @@ Create a user session in Gate Three and logs into the specified customer and pro
 
 + Response 200 (application/json)
 
-    + Attributes (Token)
+    + Attributes (object)
+        + returnedObject (Token)
+        + messages (array[Message], optional) - List of user mesages.
 
 ### Delete User Session [DELETE]
 
@@ -57,7 +59,9 @@ In active session, logs into a different customer.  The response is the new user
 
 + Response 200 (application/json)
 
-    + Attributes (Token)
+    + Attributes (object)
+        + returnedObject (Token)
+        + messages (array[Message], optional) - List of user mesages.
 
 ## Project Login [/usersession/logInToProject/{idProject}]
 
@@ -76,7 +80,9 @@ In active session, logs into a different project.  The response is the new user 
 
 + Response 200 (application/json)
 
-    + Attributes (Token)
+    + Attributes (object)
+        + returnedObject (Token)
+        + messages (array[Message], optional) - List of user mesages.
 
 ## Group Settings
 
@@ -84,7 +90,7 @@ Resources related to settings.
 
 ## Settings Collection [/settings]
 
-### Get Setting [GET /settings{?name,defaultOnly,selectedIds}]
+### Get Setting [GET /settings{?name,selectedIds}]
 
 Get values for a setting.
 
@@ -93,10 +99,13 @@ Get values for a setting.
         + Members
             + AUTOMATIC_SCO_ISSUING
             + CNF_CHANGE_TYPE
+            + CNF_CHANGE_TYPE_DEFAULT
             + CNF_CHANGE_TYPE_AUTO
             + CHANGE_AUTO_CREATE_BUDGET_BILLING
             + CNF_CHANGE_ISSUE_CODE
+            + CNF_CHANGE_ISSUE_CODE_DEFAULT
             + CNF_CHANGE_REASON
+            + CNF_CHANGE_REASON_DEFAULT
             + CNF_CHANGE_CONTACT_NOTIF
             + CNF_CHANGE_ADDITIONAL_COST
             + CNF_CHANGE_HIDE_FIELD_ALL
@@ -120,97 +129,26 @@ Get values for a setting.
             + CHANGE_CONFIGURATION_COSTACCOUNT_SELFPERFORMED_QUOTE
             + CHANGE_CONFIGURATION_COSTACCOUNT_UNASSIGNED_QUOTE
             + CHANGE_CONFIGURATION_COSTACCOUNT_ALL
-    + defaultOnly: false (boolean, optional) - True if the default value is only returned, false for all values for the specified setting
-        + Default: false
     + selectedIds: 12,578,444 (array[number], optional) - Currently selected values (only pass ID of those values).
+
++ Request
+
+    + Header
+
+            G3-User-Session-Token: <user-session-token>
+            G3-Action-Context-Token: <action-context-token>
 
 + Response 200 (application/json)
 
-        [
-          {
-            "persistentDTO": {
-              "idChangeType": 251902,
-              "isActive": true,
-              "name": null,
-              "description": "Architectural Change Order",
-              "prefix": "ACO",
-              "nextAvailableNumber": 25,
-              "isTotalEstimatedAmount": false,
-              "isNotToExceedAmount": false,
-              "updatePrimeContractPayApplication": true,
-              "isDrawdown": true,
-            }
-          },
-          {
-            "persistentDTO": {
-              "idChangeType": 110288,
-              "isActive": true,
-              "name": null,
-              "description": "Area-01",
-              "prefix": "area",
-              "nextAvailableNumber": 2,
-              "isTotalEstimatedAmount": true,
-              "isNotToExceedAmount": true,
-              "updatePrimeContractPayApplication": true,
-              "isDrawdown": false,
-            }
-          }
-        ]
+    + Attributes (object)
+        + returnedObject (array[Change Type Setting]) - Setting values.
+        + messages (array[Message], optional) - List of user mesages.
 
 ## Group Access Control Privileges
 
 Resources related to checking access control privileges.
 
 **How privileges work**: privileges have an order.  Starting from the lowest privilege, they are: *Read*, *Update*, *Create*, and *Execute*.  Therefore if a user has the *Execute* privilege then they have full access (i.e. implies they have the lower privileges: *Read*, *Update*, and *Create*).  The *hasAccessControlRight* endpoint checks if a user has the requested privilege *or higher*.  You can specify a *strict* flag to check if they have the exact privilege.  A more convenient endpoint is the get *highestPrivilege*, which returns the highest privilege.  Therefore if you want to know if a user has edit or just read only, you can call the endpoint and test if the privilege is equal to *Read*.
-
-## Has Access Control Collection [/acp/hasAccessControlRight]
-
-For a given group(s) and a specified privilege, checks if user has the access.  You can specify a *strict* flag to check if they have the exact privilege.
-
-## Check Access for a Group [GET /acp/hasAccessControlRight{?groupName,privilege,strict}]
-
-Checks if a user has the requested privilege *or higher* on the specified group.
-
-+ Parameters
-    + groupName (string) - Name of group to check if user has access.
-    + privilege (enum[string]) - Check if user has this privilege or higher for group name.
-        + Members
-            + Read
-            + Update
-            + Create
-            + Execute
-    + strict (boolean, optional) - If true the user must have exactly the requested privilege (i.e. not higher).
-        + Default: false
-
-+ Request (application/json)
-
-    + Header
-
-            G3-User-Session-Token: <user-session-token>
-            G3-Action-Context-Token: <action-context-token>
-
-+ Response 200 (application/json)
-
-    + Body
-
-            true
-
-## Check Access for a List of Groups [POST /acp/hasAccessControlRight]
-
-Checks if a user has the requested privileges *or higher* on the specified groups.  You can specify a *strict* flag to check if they have the exact privilege.
-
-+ Request (application/json)
-
-    + Header
-
-            G3-User-Session-Token: <user-session-token>
-            G3-Action-Context-Token: <action-context-token>
-
-    + Attributes (array[Access Control Right Request])
-
-+ Response 200 (application/json)
-
-    + Attributes (array[Access Control Right Response])
 
 ## Get Highest Privilege Collection [/acp/highestPrivilege]
 
@@ -219,7 +157,7 @@ Checks if a user has the requested privileges *or higher* on the specified group
 Retrieves the user's higheset privilege to a requested group.
 
 + Parameters
-    + groupName (string) - Name of group to check if user has access.
+    + groupName: Comany Category (string) - Name of group to check if user has access.
 
 + Request (application/json)
 
@@ -230,7 +168,9 @@ Retrieves the user's higheset privilege to a requested group.
 
 + Response 200 (application/json)
 
-        "Execute"
+    + Attributes (object)
+        + returnedObject (ACP Response) - Highest privilege for group.
+        + messages (array[Message], optional) - List of user mesages.
 
 ## Get Highest Privileges for a List of Groups [POST /acp/highestPrivilege]
 
@@ -243,52 +183,285 @@ Retrieves the user's higheset privilege to a requested list of groups.
             G3-User-Session-Token: <user-session-token>
             G3-Action-Context-Token: <action-context-token>
 
-    + Attributes (array[Access Control Group Request])
+    + Attributes (array[ACP Request])
 
 + Response 200 (application/json)
 
-    + Attributes (array[Access Control Group Response])
+    + Attributes (object)
+        + returnedObject (array[ACP Response]) - Highest privilege for groups.
+        + messages (array[Message], optional) - List of user mesages.
 
-## Is Executable Collection [/acp/isExecutable]
+## Group Change Management Module
 
-Checks if user has *Execute* privilege for a given group(s).
+Resources related to the change management module.
 
-## Check Executable Access for Group [GET /acp/isExecutable{?groupName}]
+## Change Document Collection [/cm/changeform]
 
-Checks if user has *Execute* privilege for a specified group.
+### Open Change Document Form [GET /cm/changeform{?iddocument}]
 
-+ Parameters
-    + groupName (string) - Name of group to check if user has access.
+Open a change document for viewing and editing.  In the response is the *action context* which is to be included in the *G3-Action-Context-Token* header for other requests such as retrieving settings for the requested document.
 
-+ Request (application/json)
+  + Parameters
+      + iddocument: 1001 (number, required) - ID of change document to open.
 
-    + Header
+  + Request
 
-            G3-User-Session-Token: <user-session-token>
-            G3-Action-Context-Token: <action-context-token>
+      + Header
 
-+ Response 200 (application/json)
+              G3-User-Session-Token: <user-session-token>
 
-        true
+  + Response 200 (application/json)
 
-## Check Executable Access for a List of Groups [POST /acp/isExecutable]
-
-Checks if user has *Execute* privilege for a list of groups.
-
-+ Request (application/json)
-
-    + Header
-
-            G3-User-Session-Token: <user-session-token>
-            G3-Action-Context-Token: <action-context-token>
-
-    + Attributes (array[Access Control Group Request])
-
-+ Response 200 (application/json)
-
-    + Attributes (array[Access Control Group Response])
+        {
+          "returnedObject": {
+            "changed": false,
+            "obs": [],
+            "saveOrUpdateCalled": false,
+            "userSessionId": null,
+            "userActionId": null,
+            "actionContext": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFByb2plY3QiOjU1OSwiaG9tZVByb2plY3QiOmZhbHNlLCJzZXR0aW5nTGV2ZWxFbnVtIjoiUHJvamVjdCIsInNldHRpbmdUYXJnZXRJZCI6NTU5LCJhY3BNb2RlRW51bSI6IkVOVElUWV9QUk9KRUNUX1RPX1NFU1NJT05fUFJPSkVDVCIsImFjcFByb2plY3RJZCI6NTU5fQ.v88zLEb3HO09R0yA0MyILHECdI6VNZIoWm6qv7Tx8lQ",
+            "userAction": "NOACTION",
+            "mainDocumentBean": {
+              "changed": false,
+              "obs": [],
+              "saveOrUpdateCalled": false,
+              "userSessionId": null,
+              "userActionId": null,
+              "actionContext": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFByb2plY3QiOjU1OSwiaG9tZVByb2plY3QiOmZhbHNlLCJzZXR0aW5nTGV2ZWxFbnVtIjoiUHJvamVjdCIsInNldHRpbmdUYXJnZXRJZCI6NTU5LCJhY3BNb2RlRW51bSI6IkVOVElUWV9QUk9KRUNUX1RPX1NFU1NJT05fUFJPSkVDVCIsImFjcFByb2plY3RJZCI6NTU5fQ.v88zLEb3HO09R0yA0MyILHECdI6VNZIoWm6qv7Tx8lQ",
+              "userAction": "NOACTION",
+              "persistentDTO": {
+                "idChangeDocument": 114001,
+                "fkChangeReason": {
+                  "idChangeReason": 200,
+                  "name": null,
+                  "description": "qwer2",
+                  "fkAclLevel": {
+                    "idAclLevel": 1,
+                    "aclLevelName": "Customer",
+                    "targetID": 0,
+                    "createdBy": 100,
+                    "createdDate": 1252472400000,
+                    "updatedBy": 100,
+                    "updatedDate": 1322150317000,
+                    "lockVersion": 148,
+                    "parentAclLevelId": null
+                  },
+                  "isLock": null,
+                  "isDefault": true,
+                  "createdBy": 0,
+                  "createdDate": 1338395017000,
+                  "updatedBy": 0,
+                  "updatedDate": 1412280555000,
+                  "lockVersion": 5,
+                  "homeProject": true,
+                  "activateActionAvailable": false,
+                  "deactivateActionAvailable": false,
+                  "deleteActionAvailable": true,
+                  "editActionAvailable": true,
+                  "validateEditOnSaveIfNotUsed": false
+                },
+                "fkChangeType": {
+                  "idChangeType": 60290,
+                  "isActive": true,
+                  "name": null,
+                  "description": "Change type Test 0004",
+                  "prefix": "ZOO4",
+                  "nextAvailableNumber": 3,
+                  "isTotalEstimatedAmount": true,
+                  "isNotToExceedAmount": true,
+                  "updatePrimeContractPayApplication": true,
+                  "isDrawdown": false,
+                  "fkjasperTemplate": null,
+                  "fkAclLevel": {
+                    "idAclLevel": 1,
+                    "aclLevelName": "Customer",
+                    "targetID": 0,
+                    "createdBy": 100,
+                    "createdDate": 1252472400000,
+                    "updatedBy": 100,
+                    "updatedDate": 1322150317000,
+                    "lockVersion": 148,
+                    "parentAclLevelId": null
+                  },
+                  "isLock": null,
+                  "isDefault": false,
+                  "createdBy": 100019,
+                  "createdDate": 1362581958000,
+                  "updatedBy": 100019,
+                  "updatedDate": 1452872312000,
+                  "lockVersion": 8,
+                  "homeProject": true,
+                  "activateActionAvailable": false,
+                  "deactivateActionAvailable": true,
+                  "deleteActionAvailable": true,
+                  "editActionAvailable": true,
+                  "validateEditOnSaveIfNotUsed": false
+                },
+                "fkChangeIssueCode": {
+                  "idChangeIssueCode": 3970,
+                  "name": null,
+                  "description": "ds2",
+                  "fkAclLevel": {
+                    "idAclLevel": 8484,
+                    "aclLevelName": "Project",
+                    "targetID": 559,
+                    "createdBy": 0,
+                    "createdDate": 1315516980000,
+                    "updatedBy": 0,
+                    "updatedDate": 1321979809000,
+                    "lockVersion": 9,
+                    "parentAclLevelId": 8476
+                  },
+                  "isLock": null,
+                  "isDefault": false,
+                  "createdBy": 0,
+                  "createdDate": 1345057196000,
+                  "updatedBy": 0,
+                  "updatedDate": 1412281715000,
+                  "lockVersion": 5,
+                  "isActive": true,
+                  "homeProject": false,
+                  "activateActionAvailable": false,
+                  "deactivateActionAvailable": true,
+                  "deleteActionAvailable": true,
+                  "editActionAvailable": true,
+                  "validateEditOnSaveIfNotUsed": false
+                },
+                "fkChangeOrder": 21358,
+                "fkProject": 559,
+                "title": "ZOO4-2",
+                "referenceNumber": 904,
+                "referenceVersion": 1,
+                "number": "ZOO4-2",
+                "billingSequenceNumber": null,
+                "displayStatus": "Active",
+                "permissionLevel": "Public",
+                "versionStatus": "Master",
+                "fkFromCompany": 1,
+                "fkFromContact": 345884,
+                "fkToCompany": null,
+                "changeCreatedDate": 1382504400000,
+                "primaryConsultantNumber": null,
+                "isScopeChange": false,
+                "includeQuotesInSummary": false,
+                "externalApproval": false,
+                "changePhrase": "",
+                "subject": "54655",
+                "description": "<p>\n\t56546546</p>\n",
+                "estimatedAmount": null,
+                "notToExceed": null,
+                "requestedByContact": 333862,
+                "requestedOnDate": null,
+                "submittedByContact": 346031,
+                "submittedOnDate": 1382536932000,
+                "approvedByContact": null,
+                "approvedOnDate": null,
+                "comments": null,
+                "summaryComments": null,
+                "detailsComments": null,
+                "createdBy": 100019,
+                "createdDate": 1382536932000,
+                "updatedBy": 100019,
+                "updatedDate": 1384798844000,
+                "lockVersion": 6,
+                "fkWorkflow": null,
+                "workflowStatus": null,
+                "displayQuoteAttachments": null,
+                "hideBillingline": null,
+                "hideBudgetline": null,
+                "hideCostAccount": null,
+                "hideOverhead": null,
+                "hideTaxes": null,
+                "insuranceBonding": null,
+                "overheadProfitSelfPerformed": 20,
+                "overheadProfitSubcontractor": 10,
+                "overheadProfitUnassigned": 25,
+                "totalAmount": 1100,
+                "isAutomaticSCOIssuing": null,
+                "homeProject": false,
+                "internalChange": false
+              },
+              "auditLogIDList": [],
+              "auditLogParameters": [],
+              "isSuperseding": false,
+              "isDrawdown": false,
+              "distributionAmount": null,
+              "ChangeOrderBean": null,
+              "projectBean": null,
+              "fkFromCompanyBean": null,
+              "fkFromContactBean": null,
+              "fkToCompanyBean": null,
+              "isOverheadProfitSubcontractorUpdated": false,
+              "isOverheadProfitSelfPerformedUpdated": false,
+              "isOverheadProfitUnassignedUpdated": false,
+              "internalChange": false,
+              "overheadProfitSubcontractorUpdated": false,
+              "overheadProfitSelfPerformedUpdated": false,
+              "overheadProfitUnassignedUpdated": false,
+              "homeProject": false
+            },
+            "workflowDocumentDefinitionBean": null,
+            "documentWorkflowBean": null,
+            "isFromEmail": false,
+            "pasteActionPending": false,
+            "nbInlineEditing": 0,
+            "associatedDocumentLink": null,
+            "changeQuoteBeanList": null,
+            "changeAttachmentBeanList": null,
+            "changeSummaryAttachmentBeanList": null,
+            "changeDetailsAttachmentBeanList": null,
+            "changeAdditionalCostBeanList": null,
+            "changeQuoteBudgetLineBeanList": null,
+            "changeDocumentBeanSuperseded": null,
+            "workflowBean": null,
+            "changeSummaryBean": null,
+            "workflowParams": [],
+            "changeDistributionBean": null,
+            "changeDocumentCostAccountBeanList": null,
+            "changeDocumentBudgetLineBeanList": null,
+            "changeDocumentBillingBeanList": null,
+            "changeQuotesBillingDisplayInSummaryBeanList": null,
+            "isDistributionApproved": false,
+            "changeDocumentApproved": false,
+            "changeSummaryReadOnly": false,
+            "commentReadOnly": false,
+            "changeDistributionReadOnly": false,
+            "changeBillingDistributionReadOnly": false,
+            "isNewChangeDocument": false,
+            "isRevised": false,
+            "isOldNew": false,
+            "changeQuoteDetailsBeanSupersededList": null,
+            "milestoneLinkBean": null,
+            "milestoneLinkBeanToDelete": null,
+            "comments": null,
+            "isForwardAndExportPDFAvailable": false,
+            "revised": false,
+            "oldNew": false,
+            "newChangeDocument": false,
+            "forwardAndExportPDFAvailable": false,
+            "distributionApproved": false,
+            "homeProject": false,
+            "fromEmail": false
+          }
+        },
+        "messsages": [
+          {
+            "type": "Information",
+            "message": "Save successful"
+          }
+        ]
 
 # Data Structures
+
+## Message (object)
+
++ type (enum[string]) - Message type.
+    + Members
+        + Information
+        + Warning
+        + Error
+        + Fatal
++ message: Save successful (string) - The message.
 
 ## User Credentials (object)
 
@@ -299,7 +472,11 @@ Checks if user has *Execute* privilege for a list of groups.
 
 + token: eyJhb.eyJleHBpcnkiO.RQ1cNX (string) - Token representing the user session.  Pass to other requests in the **G3-User-Session-Token** header.
 
-## Access Control Right Request (object)
+## ACP Request (object)
+
++ groupName: Comany Category (string) - Check for access to this group.
+
+## ACP Response (object)
 
 + groupName: Comany Category (string) - Check for access to this group.
 + privilege (enum[string]) - Check if user has this privilege or higher for group name.
@@ -308,27 +485,17 @@ Checks if user has *Execute* privilege for a list of groups.
         + Update
         + Create
         + Execute
-+ strict (boolean, optional) - User must have exactly the requested privilege
-    + Default: false
 
-## Access Control Right Response (object)
+## Change Type Setting (object)
 
-+ groupName: Comany Category (string) - Check for access to this group.
-+ privilege (enum[string]) - Check if user has this privilege or higher for group name.
-    + Members
-        + Read
-        + Update
-        + Create
-        + Execute
-+ strict (boolean) - User must have exactly the requested privilege
-    + Default: false
-+ hasRight (boolean) - True if user has the requested access, false otherwise.
-
-## Access Control Group Request (object)
-
-+ groupName: Comany Category (string) - Check for access to this group.
-
-## Access Control Group Response (object)
-
-+ groupName: Comany Category (string) - Check for access to this group.
-+ hasRight (boolean) - True if user has the requested access, false otherwise.
++ persistentDTO (object)
+    + idChangeType: 251902 (number)
+    + isActive: true (boolean)
+    + name: null (string)
+    + description: Architectural Change Order (string)
+    + prefix: ACO (string)
+    + nextAvailableNumber: 25 (number)
+    + isTotalEstimatedAmount: false (boolean)
+    + isNotToExceedAmount: false (boolean)
+    + updatePrimeContractPayApplication: true (boolean)
+    + isDrawdown: true (boolean)

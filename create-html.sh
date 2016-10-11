@@ -1,1 +1,1 @@
-aglio -i ./gate-three.apib -o ./output.html
+aglio -i ./gate-three.apib -o ./gate-three-api.html
