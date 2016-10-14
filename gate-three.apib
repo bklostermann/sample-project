@@ -9,9 +9,9 @@ API provides access to Gate Three services.
 
 Resources related to user session management.
 
-## User Session [/usersession]
+## User Sessions [/usersessions]
 
-### Create User Session [POST /usersession{?idCustomer,idProject}]
+### Create User Session [POST /usersessions{?idCustomer,idProject}]
 
 Create a user session in Gate Three and logs into the specified customer and project.  The response is the user session token that is passed to all future requests in the **G3-User-Session-Token** header.
 
@@ -42,7 +42,7 @@ Deletes (logout) of the user session specified in the **G3-User-Session-Token** 
 
 + Response 200 (application/json)
 
-## Customer Login [/usersession/logInToCustomer/{idCustomer}]
+## Customer Login [/usersessions/logInToCustomer/{idCustomer}]
 
 In active session, logs into a different customer.  The response is the new user session token that should be used going forward in the **G3-User-Session-Token** header.
 
@@ -63,7 +63,7 @@ In active session, logs into a different customer.  The response is the new user
         + returnedObject (Token)
         + messages (array[Message], optional) - List of user mesages.
 
-## Project Login [/usersession/logInToProject/{idProject}]
+## Project Login [/usersessions/logInToProject/{idProject}]
 
 In active session, logs into a different project.  The response is the new user session token that should be used going forward in the **G3-User-Session-Token** header.
 
@@ -150,9 +150,9 @@ Resources related to checking access control privileges.
 
 **How privileges work**: privileges have an order.  Starting from the lowest privilege, they are: *Read*, *Update*, *Create*, and *Execute*.  Therefore if a user has the *Execute* privilege then they have full access (i.e. implies they have the lower privileges: *Read*, *Update*, and *Create*).  The *hasAccessControlRight* endpoint checks if a user has the requested privilege *or higher*.  You can specify a *strict* flag to check if they have the exact privilege.  A more convenient endpoint is the get *highestPrivilege*, which returns the highest privilege.  Therefore if you want to know if a user has edit or just read only, you can call the endpoint and test if the privilege is equal to *Read*.
 
-## Get Highest Privilege Collection [/acp/highestPrivilege]
+## Get Highest Privilege Collection [/acp/highestPrivileges]
 
-## Get Highest Privilege for a Group [GET /acp/highestPrivilege{?groupName}]
+## Get Highest Privilege for a Group [GET /acp/highestPrivileges/{groupName}]
 
 Retrieves the user's higheset privilege to a requested group.
 
@@ -195,9 +195,9 @@ Retrieves the user's higheset privilege to a requested list of groups.
 
 Resources related to the change management module.
 
-## Change Document Collection [/cm/changeform]
+## Change Document Collection [/cm/changeforms]
 
-### Open Change Document Form [GET /cm/changeform{?iddocument}]
+### Get Change Document Form [GET /cm/changeforms/{iddocument}]
 
 Open a change document for viewing and editing.  In the response is the *action context* which is to be included in the *G3-Action-Context-Token* header for other requests such as retrieving settings for the requested document.
 
@@ -451,6 +451,161 @@ Open a change document for viewing and editing.  In the response is the *action 
           }
         ]
 
+### Get Change Quotes [GET /cm/changeforms/{iddocument}/quotes]
+
+Get list of quotes associated to a change document.
+
+  + Parameters
+      + iddocument: 1001 (number, required) - ID of change document to get quotes for.
+
+  + Request
+
+      + Header
+
+              G3-User-Session-Token: <user-session-token>
+
+  + Response 200 (application/json)
+
+        {
+          "returnedObject": [
+            {
+              "changed": false,
+              "obs": [],
+              "saveOrUpdateCalled": false,
+              "userSessionId": null,
+              "actionContext": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFByb2plY3QiOjU1OSwiaG9tZVByb2plY3QiOmZhbHNlLCJzZXR0aW5nTGV2ZWxFbnVtIjoiUHJvamVjdCIsInNldHRpbmdUYXJnZXRJZCI6NTU5LCJhY3BNb2RlRW51bSI6IkVOVElUWV9QUk9KRUNUX1RPX1NFU1NJT05fUFJPSkVDVCIsImFjcFByb2plY3RJZCI6NTU5fQ.v88zLEb3HO09R0yA0MyILHECdI6VNZIoWm6qv7Tx8lQ",
+              "userAction": "NOACTION",
+              "persistentDTO": {
+                "idChangeQuote": 12481,
+                "fkChangeDocument": null,
+                "fkSubcontractorChangeOrder": null,
+                "versionStatus": "Master",
+                "permissionLevel": "Public",
+                "fkProject": 559,
+                "title": "UA - r",
+                "referenceNumber": 754,
+                "referenceVersion": 1,
+                "displayStatus": "Active",
+                "quoteType": "Unassigned",
+                "displayInSummary": null,
+                "displayInDistribution": null,
+                "quoteAmount": 0,
+                "fkCurrency": 907,
+                "currencyExchangeRate": 1,
+                "fkTaxDetail1": null,
+                "tax1DetailProperty": null,
+                "fkTaxDetail2": null,
+                "tax2DetailProperty": null,
+                "fkTaxDetail3": null,
+                "tax3DetailProperty": null,
+                "tax1IncludedAmount": null,
+                "tax2IncludedAmount": null,
+                "ta3xIncludedAmount": null,
+                "committedCost": null,
+                "estimatedAmount": 0,
+                "responseDueDate": 1344312000000,
+                "notifySubcontractor": false,
+                "submittedDate": 1408728828000,
+                "fkCompany": 199541813,
+                "fkContact": null,
+                "costImplication": true,
+                "fkRequestedByContact": null,
+                "requestedDate": null,
+                "createdBy": 0,
+                "createdDate": 1346353737000,
+                "updatedBy": 0,
+                "updatedDate": 1408728828000,
+                "lockVersion": 5,
+                "scope": "<p>\n\tr</p>\n",
+                "quoteCreatedDate": 1408549978000,
+                "fkCustomerCompany": 199457066,
+                "fkCustomerContact": 333860,
+                "scheduleImplication": false,
+                "impactActivity": null,
+                "impactDurationChange": null,
+                "fkWorkflow": null,
+                "workflowStatus": null,
+                "subject": null,
+                "homeProject": false
+              },
+              "auditLogIDList": [],
+              "auditLogParameters": [],
+              "displayInSummaryOld": null,
+              "displayInDistributionOld": null,
+              "deleteDraftSCO": false,
+              "recentlyAddedToDistribution": false,
+              "recentlyAddedToSummary": false,
+              "supersededQuoteDisplayInsummary": true,
+              "costAccountAssignmentBeanList": null,
+              "changeQuoteBudgetLineList": null,
+              "changeQuoteDistributionBeanList": null,
+              "lkpCurrencyBean": null,
+              "projectBean": null,
+              "fkCompanyBean": null,
+              "changeQuoteBillingBeanList": null,
+              "changeQuoteContractBeanList": null,
+              "subcontractorChangeOrderBean": null,
+              "updateChangeDocBudgetLineDistributionAmount": false,
+              "updateChangeDocCostDistributionAmount": false,
+              "updateChangeDocBillingDistributionAmount": false,
+              "previousQuoteAmount": null,
+              "continueWithNoCostAccount": false,
+              "callManageSavedApprovedQuote": false,
+              "hasSupersededChangeQuote": false,
+              "cnfTax1DetailBean": null,
+              "cnfTax2DetailBean": null,
+              "cnfTax3DetailBean": null,
+              "continueWithCostAccountForSubQuote": false,
+              "changeQuoteARequestedQuote": false,
+              "homeProject": false
+              }
+          ],
+          "messages": [],
+        }
+
+### Get Change Summary [GET /cm/changeforms/{iddocument}/summary]
+
+Get change summary.
+
+  + Parameters
+      + iddocument: 1001 (number, required) - ID of change document to get summary for.
+
+  + Request
+
+      + Header
+
+              G3-User-Session-Token: <user-session-token>
+
+  + Response 200 (application/json)
+
+        {
+          "returnedObject": {
+            "changed": false,
+            "obs": [],
+            "saveOrUpdateCalled": false,
+            "userSessionId": null,
+            "actionContext": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZFByb2plY3QiOm51bGwsImhvbWVQcm9qZWN0IjpmYWxzZSwic2V0dGluZ0xldmVsRW51bSI6IlByb2plY3QiLCJzZXR0aW5nVGFyZ2V0SWQiOm51bGwsImFjcE1vZGVFbnVtIjoiRU5USVRZX1BST0pFQ1RfVE9fU0VTU0lPTl9QUk9KRUNUIiwiYWNwUHJvamVjdElkIjpudWxsfQ.jOHNDfghXJsNJmLZdjSq03tA90h1TYlKSo05GVMPoGo",
+            "userAction": "NOACTION",
+            "persistentDTO": {
+              "idChangeSummary": 6542,
+              "fkChangeDocument": null,
+              "fkWorkflow": null,
+              "workflowStatus": null,
+              "displayStatus": "Draft",
+              "createdBy": 0,
+              "createdDate": 1353445382000,
+              "updatedBy": 0,
+              "updatedDate": 1353445382000,
+              "lockVersion": 0,
+              "homeProject": false
+            },
+            "auditLogIDList": [],
+            "auditLogParameters": [],
+            "homeProject": false
+          },
+          "messages": [],
+        }
+
 # Data Structures
 
 ## Message (object)
@@ -465,7 +620,6 @@ Open a change document for viewing and editing.  In the response is the *action 
 
 ## User Credentials (object)
 
-+ username: root@ellisdon.com (string) - User name
 + authSessionId: 102W6swFEMaTPCjYjRJudvnLg (string) - Authenticated session ID (i.e. Okta session ID)
 
 ## Token (object)
