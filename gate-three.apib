@@ -90,7 +90,7 @@ Resources related to settings.
 
 ## Settings Collection [/settings]
 
-### Get Setting [GET /settings{?name,selectedIds}]
+### Get Setting [GET /settings/{name}{?selectedIds}]
 
 Get values for a setting.
 
@@ -172,7 +172,7 @@ Retrieves the user's higheset privilege to a requested group.
         + returnedObject (ACP Response) - Highest privilege for group.
         + messages (array[Message], optional) - List of user mesages.
 
-## Get Highest Privileges for a List of Groups [POST /acp/highestPrivilege]
+## Get Highest Privileges for a List of Groups [POST /acp/highestPrivileges]
 
 Retrieves the user's higheset privilege to a requested list of groups.
 
@@ -197,7 +197,7 @@ Resources related to the change management module.
 
 ## Change Document Collection [/cm/changeforms]
 
-### Get Change Document Form [GET /cm/changeforms/{iddocument}]
+### Get Change Form [GET /cm/changeforms/{iddocument}]
 
 Open a change document for viewing and editing.  In the response is the *action context* which is to be included in the *G3-Action-Context-Token* header for other requests such as retrieving settings for the requested document.
 
@@ -604,6 +604,32 @@ Get change summary.
             "homeProject": false
           },
           "messages": [],
+        }
+
+### Perform Place Holder Substitution [GET /cm/changedocuments/placeholdersubstitutions]
+
+Given text containing place holders, the end point will substitue the place holders with their respective data in the provided change document.  The 'source' field in the request body is a Change Document.  Within a change form, the Change Document is represented by the 'mainDocumentBean' field.
+
+  + Request (application/json)
+
+      + Header
+
+              G3-User-Session-Token: <user-session-token>
+
+      + Body
+
+              {
+                "text": "Text to replace: %%change_description_change_number%%",
+                "source": {
+                  ...
+                }
+              }
+
+  + Response 200 (application/json)
+
+        {
+          "messages": [],
+          "returnedObject": "Text to replace: type1-130"
         }
 
 # Data Structures
